@@ -1,3 +1,15 @@
+/**
+ * TaskCard Component
+ * 
+ * A comprehensive task display card that shows task information in a consistent,
+ * clickable format. Features include status management, file attachments,
+ * priority indicators, and quick actions.
+ * 
+ * @fileoverview Displays individual task information with interactive elements
+ * @author TaskFlow Team
+ * @version 2.1.0
+ */
+
 'use client'
 
 import { useState } from 'react'
@@ -19,12 +31,18 @@ import {
 import { formatDate, formatTime, getPriorityColor, getStatusColor } from '@/lib/utils'
 import { cn } from '@/lib/utils'
 
+/**
+ * Project interface representing a project that tasks can belong to
+ */
 interface Project {
   id: string
   name: string
   color: string
 }
 
+/**
+ * Attachment interface representing file attachments for tasks
+ */
 interface Attachment {
   id: string
   filename: string
@@ -34,6 +52,9 @@ interface Attachment {
   created_at: string
 }
 
+/**
+ * Task interface representing a complete task with all its properties
+ */
 interface Task {
   id: string
   title: string
@@ -50,19 +71,42 @@ interface Task {
   attachments?: Attachment[]
 }
 
+/**
+ * Props interface for the TaskCard component
+ */
 interface TaskCardProps {
+  /** The task object to display */
   task: Task
+  /** Callback function when edit button is clicked */
   onEdit: (task: Task) => void
+  /** Callback function when delete button is clicked */
   onDelete: (taskId: string) => void
+  /** Callback function when task status is changed */
   onStatusChange: (taskId: string, status: string) => void
+  /** Optional callback function when task card is clicked to view details */
   onView?: (task: Task) => void
 }
 
+/**
+ * TaskCard Component
+ * 
+ * Renders a task card with consistent height and layout, displaying task information
+ * including title, description, status, priority, due date, and attachments.
+ * Supports click-to-view functionality and quick actions.
+ * 
+ * @param props - TaskCardProps object containing task data and callback functions
+ * @returns JSX element representing the task card
+ */
 export default function TaskCard({ task, onEdit, onDelete, onStatusChange, onView }: TaskCardProps) {
+  // State management for component interactions
   const [isDeleting, setIsDeleting] = useState(false)
   const [attachments, setAttachments] = useState<Attachment[]>(task.attachments || [])
   const [loadingAttachments, setLoadingAttachments] = useState(false)
 
+  /**
+   * Handles task deletion with confirmation dialog
+   * @async
+   */
   const handleDelete = async () => {
     if (window.confirm('Are you sure you want to delete this task?')) {
       setIsDeleting(true)
@@ -74,6 +118,10 @@ export default function TaskCard({ task, onEdit, onDelete, onStatusChange, onVie
     }
   }
 
+  /**
+   * Downloads a file attachment by creating a temporary download link
+   * @param attachment - The attachment object to download
+   */
   const handleDownloadAttachment = (attachment: Attachment) => {
     const link = document.createElement('a')
     link.href = `/api/files/${attachment.filename}`
@@ -83,6 +131,11 @@ export default function TaskCard({ task, onEdit, onDelete, onStatusChange, onVie
     document.body.removeChild(link)
   }
 
+  /**
+   * Deletes a file attachment with confirmation
+   * @param attachmentId - The ID of the attachment to delete
+   * @async
+   */
   const handleDeleteAttachment = async (attachmentId: string) => {
     if (window.confirm('Are you sure you want to delete this attachment?')) {
       try {
@@ -102,10 +155,20 @@ export default function TaskCard({ task, onEdit, onDelete, onStatusChange, onVie
     }
   }
 
+  /**
+   * Handles task status changes
+   * @param newStatus - The new status to set for the task
+   * @async
+   */
   const handleStatusChange = async (newStatus: string) => {
     await onStatusChange(task.id, newStatus)
   }
 
+  /**
+   * Returns the appropriate status icon based on task status
+   * @param status - The task status
+   * @returns JSX element for the status icon
+   */
   const getStatusIcon = (status: string) => {
     switch (status) {
       case 'completed':
@@ -117,6 +180,11 @@ export default function TaskCard({ task, onEdit, onDelete, onStatusChange, onVie
     }
   }
 
+  /**
+   * Returns priority icon for urgent tasks
+   * @param priority - The task priority level
+   * @returns JSX element for priority icon or null
+   */
   const getPriorityIcon = (priority: string) => {
     if (priority === 'urgent') {
       return <AlertTriangle className="h-4 w-4 text-red-500" />
@@ -124,8 +192,14 @@ export default function TaskCard({ task, onEdit, onDelete, onStatusChange, onVie
     return null
   }
 
+  // Check if task is overdue
   const isOverdue = task.due_date && new Date(task.due_date) < new Date() && task.status !== 'completed'
 
+  /**
+   * Handles card click events, opening detail view if onView callback is provided
+   * Prevents triggering when clicking on interactive elements
+   * @param e - Mouse event
+   */
   const handleCardClick = (e: React.MouseEvent) => {
     // Don't trigger if clicking on buttons or interactive elements
     const target = e.target as HTMLElement

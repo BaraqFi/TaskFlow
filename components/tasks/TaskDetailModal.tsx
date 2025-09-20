@@ -1,3 +1,15 @@
+/**
+ * TaskDetailModal Component
+ * 
+ * A comprehensive modal for viewing complete task details in a read-only format.
+ * Displays all task information including metadata, attachments, project details,
+ * and time tracking. Provides quick actions for status changes and task management.
+ * 
+ * @fileoverview Modal component for detailed task viewing and management
+ * @author TaskFlow Team
+ * @version 2.1.0
+ */
+
 'use client'
 
 import { useState, useEffect } from 'react'
@@ -22,12 +34,18 @@ import {
 import { format } from 'date-fns'
 import { makeAuthenticatedRequest } from '@/lib/api-client'
 
+/**
+ * Project interface representing a project that tasks can belong to
+ */
 interface Project {
   id: string
   name: string
   color: string
 }
 
+/**
+ * Attachment interface representing file attachments for tasks
+ */
 interface Attachment {
   id: string
   filename: string
@@ -37,6 +55,9 @@ interface Attachment {
   created_at: string
 }
 
+/**
+ * Task interface representing a complete task with all its properties
+ */
 interface Task {
   id: string
   title: string
@@ -54,12 +75,21 @@ interface Task {
   attachments?: Attachment[]
 }
 
+/**
+ * Props interface for the TaskDetailModal component
+ */
 interface TaskDetailModalProps {
+  /** Whether the modal is currently open */
   isOpen: boolean
+  /** Callback function to close the modal */
   onClose: () => void
+  /** The task object to display details for */
   task: Task | null
+  /** Callback function when edit button is clicked */
   onEdit: (task: Task) => void
+  /** Callback function when delete button is clicked */
   onDelete: (taskId: string) => void
+  /** Callback function when task status is changed */
   onStatusChange: (taskId: string, status: string) => void
 }
 

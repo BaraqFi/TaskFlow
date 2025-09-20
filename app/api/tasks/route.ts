@@ -1,6 +1,38 @@
+/**
+ * Tasks API Routes
+ * 
+ * Handles CRUD operations for tasks including creation, retrieval, updating,
+ * and deletion. Supports advanced filtering, search, and task reordering.
+ * All endpoints require authentication and enforce user ownership.
+ * 
+ * @fileoverview API routes for task management operations
+ * @author TaskFlow Team
+ * @version 2.1.0
+ */
+
 import { NextRequest, NextResponse } from 'next/server'
 import { getAuthenticatedUser } from '@/lib/api-auth'
 
+/**
+ * GET /api/tasks
+ * 
+ * Retrieves tasks for the authenticated user with optional filtering and search.
+ * Supports filtering by project, status, priority, date range, and tags.
+ * Results are ordered by position (for drag & drop) and creation date.
+ * 
+ * Query Parameters:
+ * - project_id: Filter tasks by specific project ID
+ * - status: Filter by task status (todo, in-progress, completed)
+ * - priority: Filter by priority level (low, medium, high, urgent)
+ * - search: Search in task title and description
+ * - date_filter: Filter by date range (today, tomorrow, this_week, etc.)
+ * - tag_filter: Filter by specific tag
+ * 
+ * @param request - Next.js request object with query parameters
+ * @returns JSON response with filtered tasks array
+ * @throws 401 if user is not authenticated
+ * @throws 500 if database operation fails
+ */
 export async function GET(request: NextRequest) {
   try {
     const { user, supabase } = await getAuthenticatedUser(request)
@@ -97,6 +129,30 @@ export async function GET(request: NextRequest) {
   }
 }
 
+/**
+ * POST /api/tasks
+ * 
+ * Creates a new task for the authenticated user. Validates required fields
+ * and sets default values for optional fields. Automatically assigns the
+ * task to the authenticated user.
+ * 
+ * Request Body:
+ * - title: Task title (required)
+ * - description: Task description (optional)
+ * - status: Task status (default: 'todo')
+ * - priority: Priority level (default: 'medium')
+ * - due_date: Due date in ISO format (optional)
+ * - estimated_time: Estimated time in minutes (optional)
+ * - project_id: Project ID to assign task to (optional)
+ * - tags: Array of tag strings (optional)
+ * - position: Position for drag & drop ordering (optional)
+ * 
+ * @param request - Next.js request object with task data in body
+ * @returns JSON response with created task data
+ * @throws 400 if required fields are missing
+ * @throws 401 if user is not authenticated
+ * @throws 500 if database operation fails
+ */
 export async function POST(request: NextRequest) {
   try {
     const { user, supabase } = await getAuthenticatedUser(request)

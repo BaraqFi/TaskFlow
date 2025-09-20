@@ -4,11 +4,11 @@ import { getAuthenticatedUser } from '@/lib/api-auth'
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { filename: string } }
+  { params }: { params: Promise<{ filename: string }> }
 ) {
   try {
     const { user, supabase } = await getAuthenticatedUser(request)
-    const filename = params.filename
+    const { filename } = await params
 
     // Find the attachment record to get the full file path and original filename
     const { data: attachment, error: fetchError } = await supabase

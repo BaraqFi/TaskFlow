@@ -3,15 +3,16 @@ import { getAuthenticatedUser } from '@/lib/api-auth'
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const { user, supabase } = await getAuthenticatedUser(request)
+    const { id: projectId } = await params
 
     const { data: project, error } = await supabase
       .from('projects')
       .select('*')
-      .eq('id', params.id)
+      .eq('id', projectId)
       .eq('user_id', user.id)
       .single()
 
@@ -37,10 +38,11 @@ export async function GET(
 
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const { user, supabase } = await getAuthenticatedUser(request)
+    const { id: projectId } = await params
 
     const body = await request.json()
     const { name, description, color, is_archived } = body
@@ -53,7 +55,7 @@ export async function PUT(
         color,
         is_archived
       })
-      .eq('id', params.id)
+      .eq('id', projectId)
       .eq('user_id', user.id)
       .select()
       .single()
@@ -80,15 +82,16 @@ export async function PUT(
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const { user, supabase } = await getAuthenticatedUser(request)
+    const { id: projectId } = await params
 
     const { error } = await supabase
       .from('projects')
       .delete()
-      .eq('id', params.id)
+      .eq('id', projectId)
       .eq('user_id', user.id)
 
     if (error) {

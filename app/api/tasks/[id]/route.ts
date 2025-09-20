@@ -3,10 +3,11 @@ import { getAuthenticatedUser } from '@/lib/api-auth'
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const { user, supabase } = await getAuthenticatedUser(request)
+    const { id: taskId } = await params
 
     const { data: task, error } = await supabase
       .from('tasks')
@@ -18,7 +19,7 @@ export async function GET(
           color
         )
       `)
-      .eq('id', params.id)
+      .eq('id', taskId)
       .eq('user_id', user.id)
       .single()
 
@@ -44,10 +45,11 @@ export async function GET(
 
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const { user, supabase } = await getAuthenticatedUser(request)
+    const { id: taskId } = await params
 
     const body = await request.json()
     const { 
@@ -77,7 +79,7 @@ export async function PUT(
         tags,
         position
       })
-      .eq('id', params.id)
+      .eq('id', taskId)
       .eq('user_id', user.id)
       .select(`
         *,
@@ -111,15 +113,16 @@ export async function PUT(
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const { user, supabase } = await getAuthenticatedUser(request)
+    const { id: taskId } = await params
 
     const { error } = await supabase
       .from('tasks')
       .delete()
-      .eq('id', params.id)
+      .eq('id', taskId)
       .eq('user_id', user.id)
 
     if (error) {

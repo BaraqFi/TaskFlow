@@ -4,11 +4,11 @@ import { v4 as uuidv4 } from 'uuid'
 
 export async function POST(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const { user, supabase } = await getAuthenticatedUser(request)
-    const taskId = params.id
+    const { id: taskId } = await params
 
     const formData = await request.formData()
     const file = formData.get('file') as File | null
@@ -76,11 +76,11 @@ export async function POST(
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const { user, supabase } = await getAuthenticatedUser(request)
-    const taskId = params.id
+    const { id: taskId } = await params
 
     // Get attachments for the task
     const { data: attachments, error } = await supabase

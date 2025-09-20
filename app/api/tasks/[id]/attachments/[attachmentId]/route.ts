@@ -3,12 +3,11 @@ import { getAuthenticatedUser } from '@/lib/api-auth'
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string; attachmentId: string } }
+  { params }: { params: Promise<{ id: string; attachmentId: string }> }
 ) {
   try {
     const { user, supabase } = await getAuthenticatedUser(request)
-    const taskId = params.id
-    const attachmentId = params.attachmentId
+    const { id: taskId, attachmentId } = await params
 
     // First, retrieve the attachment record to get the file_path
     const { data: attachment, error: fetchError } = await supabase

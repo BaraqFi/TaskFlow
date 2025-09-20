@@ -225,7 +225,7 @@ export default function ProjectList() {
         isOpen={isFormOpen}
         onClose={handleCloseForm}
         onSubmit={editingProject ? handleUpdateProject : handleCreateProject}
-        initialData={editingProject}
+        initialData={editingProject || undefined}
         title={editingProject ? 'Edit Project' : 'Create New Project'}
       />
     </div>

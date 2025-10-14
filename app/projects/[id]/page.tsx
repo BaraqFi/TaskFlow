@@ -88,7 +88,7 @@ export default function ProjectPage() {
     <Layout>
       <div className="space-y-6">
         {/* Project Header */}
-        <div className="flex items-center space-x-4">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:space-x-4">
           <Link href="/projects">
             <Button variant="outline" size="sm">
               <ArrowLeft className="h-4 w-4 mr-2" />

@@ -220,8 +220,7 @@ export default function TaskList({ projectId }: TaskListProps) {
 
   return (
     <div className="space-y-6">
-      {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h1 className="text-2xl font-bold text-secondary-900 dark:text-secondary-100">
             {projectId ? 'Project Tasks' : 'All Tasks'}
@@ -240,7 +239,7 @@ export default function TaskList({ projectId }: TaskListProps) {
       <div className="bg-white dark:bg-secondary-800 rounded-lg border border-secondary-200 dark:border-secondary-700 p-4">
         <div className="space-y-4">
           {/* Basic Filters */}
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             {/* Search */}
             <div className="relative">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-secondary-400 h-4 w-4" />
@@ -320,7 +319,7 @@ export default function TaskList({ projectId }: TaskListProps) {
 
           {/* Advanced Filters */}
           {showAdvancedFilters && (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-4 border-t border-secondary-200 dark:border-secondary-700">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-4 border-t border-secondary-200 dark:border-secondary-700">
               {/* Date Filter */}
               <div>
                 <label className="block text-sm font-medium text-secondary-700 dark:text-secondary-300 mb-2">
@@ -398,7 +397,7 @@ export default function TaskList({ projectId }: TaskListProps) {
                 ref={provided.innerRef}
                 {...provided.droppableProps}
                 className={cn(
-                  "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 min-h-[200px]",
+                  "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 min-h-[200px]",
                   snapshot.isDraggingOver && "bg-primary-50 dark:bg-primary-900/20 rounded-lg"
                 )}
               >

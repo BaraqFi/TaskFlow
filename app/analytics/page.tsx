@@ -203,7 +203,7 @@ export default function AnalyticsPage() {
     <Layout>
       <div className="space-y-6">
         {/* Header */}
-        <div className="flex items-center justify-between">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
           <div className="flex items-center space-x-4">
             <h1 className="text-2xl font-bold text-secondary-900 dark:text-secondary-100">
               Analytics
@@ -250,7 +250,7 @@ export default function AnalyticsPage() {
         ) : analyticsData ? (
           <div className="space-y-6">
             {/* Key Metrics */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
               <div className="bg-white dark:bg-secondary-800 rounded-lg border border-secondary-200 dark:border-secondary-700 p-6">
                 <div className="flex items-center justify-between">
                   <div>
@@ -301,7 +301,7 @@ export default function AnalyticsPage() {
             </div>
 
             {/* Charts Row */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {/* Tasks by Priority */}
               <div className="bg-white dark:bg-secondary-800 rounded-lg border border-secondary-200 dark:border-secondary-700 p-6">
                 <h3 className="text-lg font-semibold text-secondary-900 dark:text-secondary-100 mb-4">
@@ -371,31 +371,33 @@ export default function AnalyticsPage() {
               <h3 className="text-lg font-semibold text-secondary-900 dark:text-secondary-100 mb-4">
                 Weekly Activity
               </h3>
-              <div className="grid grid-cols-7 gap-2">
-                {analyticsData.weeklyActivity.map((day, index) => (
-                  <div key={index} className="text-center">
-                    <div className="text-xs text-secondary-500 dark:text-secondary-400 mb-2">
-                      {format(new Date(day.date), 'EEE')}
-                    </div>
-                    <div className="space-y-1">
-                      <div className="h-8 bg-green-100 dark:bg-green-900/20 rounded flex items-end justify-center">
-                        <div 
-                          className="w-full bg-green-500 rounded-b"
-                          style={{ height: `${Math.max(4, (day.completed / Math.max(...analyticsData.weeklyActivity.map(d => d.completed))) * 100)}%` }}
-                        ></div>
+              <div className="overflow-x-auto">
+                <div className="grid grid-cols-7 gap-2 min-w-[400px]">
+                  {analyticsData.weeklyActivity.map((day, index) => (
+                    <div key={index} className="text-center">
+                      <div className="text-xs text-secondary-500 dark:text-secondary-400 mb-2">
+                        {format(new Date(day.date), 'EEE')}
                       </div>
-                      <div className="h-8 bg-blue-100 dark:bg-blue-900/20 rounded flex items-end justify-center">
-                        <div 
-                          className="w-full bg-blue-500 rounded-b"
-                          style={{ height: `${Math.max(4, (day.created / Math.max(...analyticsData.weeklyActivity.map(d => d.created))) * 100)}%` }}
-                        ></div>
+                      <div className="space-y-1">
+                        <div className="h-8 bg-green-100 dark:bg-green-900/20 rounded flex items-end justify-center">
+                          <div 
+                            className="w-full bg-green-500 rounded-b"
+                            style={{ height: `${Math.max(4, (day.completed / Math.max(...analyticsData.weeklyActivity.map(d => d.completed))) * 100)}%` }}
+                          ></div>
+                        </div>
+                        <div className="h-8 bg-blue-100 dark:bg-blue-900/20 rounded flex items-end justify-center">
+                          <div 
+                            className="w-full bg-blue-500 rounded-b"
+                            style={{ height: `${Math.max(4, (day.created / Math.max(...analyticsData.weeklyActivity.map(d => d.created))) * 100)}%` }}
+                          ></div>
+                        </div>
+                      </div>
+                      <div className="text-xs text-secondary-500 dark:text-secondary-400 mt-1">
+                        {day.completed + day.created}
                       </div>
                     </div>
-                    <div className="text-xs text-secondary-500 dark:text-secondary-400 mt-1">
-                      {day.completed + day.created}
-                    </div>
-                  </div>
-                ))}
+                  ))}
+                </div>
               </div>
               <div className="flex items-center justify-center space-x-4 mt-4">
                 <div className="flex items-center space-x-2">
@@ -410,7 +412,7 @@ export default function AnalyticsPage() {
             </div>
 
             {/* Additional Stats */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
               <div className="bg-white dark:bg-secondary-800 rounded-lg border border-secondary-200 dark:border-secondary-700 p-6">
                 <div className="flex items-center justify-between">
                   <div>

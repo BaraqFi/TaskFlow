@@ -77,14 +77,14 @@ export default function Dashboard() {
     <div className="space-y-6">
       {/* Welcome Section */}
       <div className="bg-gradient-to-r from-primary-500 to-accent-500 rounded-xl p-6 text-white">
-        <h1 className="text-2xl font-bold mb-2">Welcome back!</h1>
+        <h1 className="text-xl sm:text-2xl font-bold mb-2">Welcome back!</h1>
         <p className="text-primary-100">
           You have {stats.tasksDueToday} tasks due today and {stats.overdueTasks} overdue tasks.
         </p>
       </div>
 
       {/* Stats Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
         <StatsCard
           title="Total Tasks"
           value={stats.totalTasks}
@@ -112,7 +112,7 @@ export default function Dashboard() {
       </div>
 
       {/* Additional Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         <StatsCard
           title="Due Today"
           value={stats.tasksDueToday}

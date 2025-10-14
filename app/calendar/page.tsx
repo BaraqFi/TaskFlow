@@ -9,6 +9,7 @@ import { ChevronLeft, ChevronRight, Plus, Calendar as CalendarIcon } from 'lucid
 import { format, startOfMonth, endOfMonth, eachDayOfInterval, isSameMonth, isSameDay, addMonths, subMonths, isToday } from 'date-fns'
 import { Button } from '@/components/ui/Button'
 import TaskForm from '@/components/tasks/TaskForm'
+import CalendarDayView from '@/components/calendar/CalendarDayView'
 
 interface Task {
   id: string
@@ -40,6 +41,16 @@ export default function CalendarPage() {
   const [selectedDate, setSelectedDate] = useState<Date | null>(null)
   const [isFormOpen, setIsFormOpen] = useState(false)
   const [viewMode, setViewMode] = useState<'month' | 'week'>('month')
+  const [isMobile, setIsMobile] = useState(false)
+
+  useEffect(() => {
+    const checkIsMobile = () => {
+      setIsMobile(window.innerWidth < 768)
+    }
+    checkIsMobile()
+    window.addEventListener('resize', checkIsMobile)
+    return () => window.removeEventListener('resize', checkIsMobile)
+  }, [])
 
   useEffect(() => {
     if (!loading && !user) {
@@ -140,7 +151,7 @@ export default function CalendarPage() {
     <Layout>
       <div className="space-y-6">
         {/* Header */}
-        <div className="flex items-center justify-between">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
           <div className="flex items-center space-x-4">
             <h1 className="text-2xl font-bold text-secondary-900 dark:text-secondary-100">
               Calendar
@@ -179,7 +190,7 @@ export default function CalendarPage() {
 
         {/* Calendar Navigation */}
         <div className="bg-white dark:bg-secondary-800 rounded-lg border border-secondary-200 dark:border-secondary-700 p-4">
-          <div className="flex items-center justify-between mb-4">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-4">
             <div className="flex items-center space-x-4">
               <button
                 onClick={() => setCurrentDate(subMonths(currentDate, 1))}
@@ -209,71 +220,81 @@ export default function CalendarPage() {
           </div>
 
           {/* Calendar Grid */}
-          <div className="grid grid-cols-7 gap-px bg-secondary-200 dark:bg-secondary-700 rounded-lg overflow-hidden">
-            {/* Weekday Headers */}
-            {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map((day) => (
-              <div key={day} className="bg-secondary-100 dark:bg-secondary-800 p-3 text-center text-sm font-medium text-secondary-700 dark:text-secondary-300">
-                {day}
-              </div>
-            ))}
-
-            {/* Empty days at the beginning */}
-            {emptyDays.map((_, index) => (
-              <div key={`empty-${index}`} className="bg-white dark:bg-secondary-800 h-24"></div>
-            ))}
-
-            {/* Calendar Days */}
-            {calendarDays.map((day) => {
-              const dayTasks = getTasksForDate(day)
-              const isCurrentMonth = isSameMonth(day, currentDate)
-              const isCurrentDay = isToday(day)
-              
-              return (
-                <div
-                  key={day.toISOString()}
-                  className={`bg-white dark:bg-secondary-800 h-24 p-1 border-r border-b border-secondary-200 dark:border-secondary-700 cursor-pointer hover:bg-secondary-50 dark:hover:bg-secondary-700 ${
-                    !isCurrentMonth ? 'opacity-40' : ''
-                  } ${isCurrentDay ? 'bg-primary-50 dark:bg-primary-900/20' : ''}`}
-                  onClick={() => handleDateClick(day)}
-                >
-                  <div className="flex items-center justify-between mb-1">
-                    <span className={`text-sm font-medium ${
-                      isCurrentDay 
-                        ? 'text-primary-600 dark:text-primary-400' 
-                        : 'text-secondary-900 dark:text-secondary-100'
-                    }`}>
-                      {format(day, 'd')}
-                    </span>
-                    {dayTasks.length > 0 && (
-                      <span className="text-xs text-secondary-500 dark:text-secondary-400">
-                        {dayTasks.length}
-                      </span>
-                    )}
-                  </div>
-                  
-                  <div className="space-y-1">
-                    {dayTasks.slice(0, 2).map((task) => (
-                      <div
-                        key={task.id}
-                        className={`text-xs p-1 rounded truncate ${getStatusColor(task.status)}`}
-                        title={task.title}
-                      >
-                        <div className="flex items-center space-x-1">
-                          <div className={`w-2 h-2 rounded-full ${getPriorityColor(task.priority)}`}></div>
-                          <span className="truncate">{task.title}</span>
-                        </div>
-                      </div>
-                    ))}
-                    {dayTasks.length > 2 && (
-                      <div className="text-xs text-secondary-500 dark:text-secondary-400">
-                        +{dayTasks.length - 2} more
-                      </div>
-                    )}
-                  </div>
+          {isMobile ? (
+            <CalendarDayView 
+              tasks={tasks}
+              currentDate={currentDate}
+              onDateClick={handleDateClick}
+              getPriorityColor={getPriorityColor}
+              getStatusColor={getStatusColor}
+            />
+          ) : (
+            <div className="grid grid-cols-7 gap-px bg-secondary-200 dark:bg-secondary-700 rounded-lg overflow-hidden">
+              {/* Weekday Headers */}
+              {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map((day) => (
+                <div key={day} className="bg-secondary-100 dark:bg-secondary-800 p-3 text-center text-sm font-medium text-secondary-700 dark:text-secondary-300">
+                  {day}
                 </div>
-              )
-            })}
-          </div>
+              ))}
+
+              {/* Empty days at the beginning */}
+              {emptyDays.map((_, index) => (
+                <div key={`empty-${index}`} className="bg-white dark:bg-secondary-800 h-24"></div>
+              ))}
+
+              {/* Calendar Days */}
+              {calendarDays.map((day) => {
+                const dayTasks = getTasksForDate(day)
+                const isCurrentMonth = isSameMonth(day, currentDate)
+                const isCurrentDay = isToday(day)
+                
+                return (
+                  <div
+                    key={day.toISOString()}
+                    className={`bg-white dark:bg-secondary-800 h-24 p-1 border-r border-b border-secondary-200 dark:border-secondary-700 cursor-pointer hover:bg-secondary-50 dark:hover:bg-secondary-700 ${
+                      !isCurrentMonth ? 'opacity-40' : ''
+                    } ${isCurrentDay ? 'bg-primary-50 dark:bg-primary-900/20' : ''}`}
+                    onClick={() => handleDateClick(day)}
+                  >
+                    <div className="flex items-center justify-between mb-1">
+                      <span className={`text-sm font-medium ${
+                        isCurrentDay 
+                          ? 'text-primary-600 dark:text-primary-400' 
+                          : 'text-secondary-900 dark:text-secondary-100'
+                      }`}>
+                        {format(day, 'd')}
+                      </span>
+                      {dayTasks.length > 0 && (
+                        <span className="text-xs text-secondary-500 dark:text-secondary-400">
+                          {dayTasks.length}
+                        </span>
+                      )}
+                    </div>
+                    
+                    <div className="space-y-1">
+                      {dayTasks.slice(0, 2).map((task) => (
+                        <div
+                          key={task.id}
+                          className={`text-xs p-1 rounded truncate ${getStatusColor(task.status)}`}
+                          title={task.title}
+                        >
+                          <div className="flex items-center space-x-1">
+                            <div className={`w-2 h-2 rounded-full ${getPriorityColor(task.priority)}`}></div>
+                            <span className="truncate">{task.title}</span>
+                          </div>
+                        </div>
+                      ))}
+                      {dayTasks.length > 2 && (
+                        <div className="text-xs text-secondary-500 dark:text-secondary-400">
+                          +{dayTasks.length - 2} more
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                )
+              })}
+            </div>
+          )}
         </div>
 
         {/* Task Form Modal */}
